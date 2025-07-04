@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+  <title>レシピ登録</title>
+  <link rel="stylesheet" th:href="@{/css/allstyle.css}">
+  <link rel="stylesheet" th:href="@{/css/recipe-form.css}">
+</head>
+
+<body>
+<div th:replace="~{layout :: header}"></div>
+
+<section layout:fragment="content">
+  <h2>レシピフォーム</h2>
+
+  <form th:action="@{/recipes/update}" th:object="${recipeForm}" method="post" enctype="multipart/form-data">
+
+    <!-- 編集時にIDをhiddenで渡す -->
+    <input type="hidden" name="recipeId" th:if="${recipeId != null}" th:value="${recipeId}">
+
+    <!-- 料理名 -->
+    <label for="title">料理名：</label>
+    <input type="text" id="title" th:field="*{title}" required>
+
+    <!-- キャッチコピー -->
+    <label for="shortDescription">キャッチコピー：</label>
+    <input type="text" id="shortDescription" th:field="*{shortDescription}">
+
+    <!-- 説明 -->
+    <label for="description">説明：</label>
+    <textarea id="description" th:field="*{description}"></textarea>
+
+    <!-- 材料セクション -->
+    <div class="ingredient-header">
+      <label class="ingredient-label">材料：</label>
+      <div class="ingredient-button-wrapper">
+        <button type="button" onclick="addIngredient()" class="add-ingredient-button">＋ 材料を追加</button>
+      </div>
+      <div class="ingredient-spacer"></div>
+    </div>
+
+    <div class="ingredient-header">
+      <div class="ingredient-name-label">材料名</div>
+      <div id="amount" class="ingredient-quantity-label">分量</div>
+    </div>
+
+    <div id="ingredient-container">
+      <div th:each="ingredient, iterStat : *{ingredients}" class="ingredient-row">
+        <input type="text" th:field="*{ingredients[__${iterStat.index}__].name}" placeholder="材料名" class="ingredient-name" />
+        <input type="text" th:field="*{ingredients[__${iterStat.index}__].quantity}" placeholder="分量" class="ingredient-quantity" />
+        <button type="button" style="margin: 0px;" class="remove-button" onclick="removeIngredient(this)">✕</button>
+      </div>
+    </div>
+
+    <!-- 画像アップロード -->
+    <label for="imageFile">画像ファイル：</label>
+    <input type="file" id="imageFile" name="imageFile">
+
+    <!-- 編集時：元の画像パス -->
+    <input type="hidden" name="originalImagePath" th:value="${recipeForm.imagePath}">
+
+    <!-- 登録 or 更新 -->
+    <button type="submit" th:text="${recipeId != null ? '更新する' : '登録する'}">登録する</button>
+
+  </form>
+</section>
+
+<div th:replace="~{layout :: footer}"></div>
+
+<!-- 材料追加・削除のJS -->
+<script th:inline="javascript">
+  let ingredientIndex = [[${#lists.size(recipeForm.ingredients)}]];
+
+  function addIngredient() {
+    const container = document.getElementById("ingredient-container");
+    const div = document.createElement("div");
+    div.className = "ingredient-row";
+    div.innerHTML = `
+      <input type="text" name="ingredients[${ingredientIndex}].name" placeholder="材料名" class="ingredient-name" />
+      <input type="text" name="ingredients[${ingredientIndex}].quantity" placeholder="分量" class="ingredient-quantity" />
+      <button type="button"  style="margin: 0px" class="remove-button" onclick="removeIngredient(this)" >✕</button>
+    `;
+    container.prepend(div);
+    ingredientIndex++;
+  }
+
+  function removeIngredient(button) {
+    button.parentElement.remove();
+  }
+</script>
+
+</body>
+</html>
