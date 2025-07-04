@@ -1,0 +1,184 @@
+/* フォーム全体を中央に白背景で表示 */
+form {
+    max-width: 700px;
+    margin: 2em auto;
+    padding: 2em;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    color: #333;
+}
+
+/* ラベルと入力欄を縦に整列 */
+form label {
+    display: block;
+    font-weight: bold;
+    margin-top: 1em;
+    margin-bottom: 0.3em;
+    color: #444;
+}
+
+/* テキスト入力欄・ファイル入力欄 */
+form input[type="text"],
+form input[type="file"] {
+    width: 100%;
+    padding: 0.6em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+/* 説明欄（テキストエリア）→ 縦に広げた！ */
+form textarea {
+    width: 100%;
+    height: 200px; /* ← ここで縦幅を広げています */
+    padding: 0.6em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
+form button {
+    display: block;        /* ブロック要素にして */
+    margin: 2em auto 0;    /* 上に余白をつけて中央寄せ */
+    background-color: #66bb6a;
+    color: white;
+    border: none;
+    padding: 0.6em 1.4em;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1em;
+    min-width: 120px;
+}
+
+/* ホバー時のボタン色 */
+form button:hover {
+    background-color: #388e3c;
+}
+/* 材料ヘッダー（タイトル行） */
+.ingredient-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    padding: 0 0.5em;
+    color: #555;
+}
+
+/* 材料行（入力欄） */
+.ingredient-row {
+    display: flex;
+    gap: 1em;
+    margin-bottom: 0.7em;
+}
+
+.ingredient-row input[type="text"] {
+    flex: 1;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+}
+#amount{
+    margin-right: 18em;
+}
+
+.ingredient-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1em;
+}
+
+.ingredient-label {
+    flex: 1;
+}
+
+.ingredient-button-wrapper {
+    flex: 1;
+    text-align: center;
+}
+
+.add-ingredient-button {
+    /* 必要ならボタンのスタイル調整をここに追加 */
+    background-color: #ff8800; /* ← 薄めのオレンジ */
+}
+.add-ingredient-button:hover {
+    background-color: #e67600; /* ← 濃いオレンジ（ホバー時） */
+}
+
+.ingredient-spacer {
+    flex: 1;
+}
+.ingredient-header {
+    display: flex;
+    gap: 0.5em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+.ingredient-name-label {
+    flex: 1;
+}
+
+.ingredient-quantity-label {
+    width: 100px;
+}
+
+/* 材料行 */
+.ingredient-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.ingredient-name {
+    flex: 1;
+    padding: 0.4em;
+}
+
+.ingredient-quantity {
+    width: 100px;
+    padding: 0.4em;
+}
+
+/* ✕ボタンのスタイル */
+.remove-button {
+    background-color: #e57373; /* 赤っぽい */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.3em 0.7em;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease;
+}
+
+.remove-button:hover {
+    background-color: #c62828;
+}
+
+/* 材料追加ボタン */
+.add-ingredient-button {
+    background-color: #ffbb66;
+    color: #fff;
+    padding: 0.5em 1.2em;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: center;
+    min-width: 100px;
+    transition: background-color 0.3s ease;
+}
+
+.add-ingredient-button:hover {
+    background-color: #ff8800;
+}

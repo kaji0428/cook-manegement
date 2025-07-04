@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>レシピ一覧</title>
+    <link rel="stylesheet" th:href="@{/css/allstyle.css}">
+    <link rel="stylesheet" th:href="@{/css/recipe-list.css}">
+</head>
+<body>
+
+<!-- ヘッダー部分を共通レイアウト（layout.html）から読み込む -->
+<div th:replace="~{layout :: header}"></div>
+<div class="god-button-container">
+    <button type="button" onclick="showGodMessage()" class="god-button">✨ GOD ✨</button>
+</div>
+
+<!-- モーダルのようなメッセージ表示 -->
+<div id="god-message" class="god-overlay" style="display: none;">
+    <div class="god-message-box">✨ 今日の一品はこれ！ ✨</div>
+</div>
+<section layout:fragment="content">
+    <div class="recipe-header">
+        <h2>レシピ一覧</h2>
+
+        <form method="get" action="/recipes">
+            <input type="text" name="keyword" placeholder="料理名で検索" th:value="${keyword}">
+            <button type="submit">検索</button>
+        </form>
+    </div>
+
+    <ul>
+        <!-- レシピが空の場合に表示されるメッセージ -->
+        <li th:if="${#lists.isEmpty(recipes)}" id="no-recipes">
+            該当する料理はありません。
+        </li>
+
+        <!-- レシピ一覧をループして表示 -->
+        <li th:each="recipe : ${recipes}">
+            <img th:src="@{${'/' + recipe.imagePath}}" alt="画像">
+
+            <div class="text-block">
+                <strong th:text="${recipe.title ?: 'タイトルなし'}">料理名</strong><br>
+                <span th:text="${recipe.shortDescription ?: '説明なし'}">キャッチコピー</span><br>
+                <span th:text="${recipe.createdAt != null ? #dates.format(recipe.createdAt, 'yyyy年MM月dd日') : '未登録'}">投稿日</span><br>
+                <a th:href="@{'/recipes/' + ${recipe.recipeId}}">もっと見る</a>
+            </div>
+        </li>
+    </ul>
+</section>
+<audio id="audio" src="kami.mp3"></audio>
+
+<!-- フッター部分を共通レイアウト（layout.html）から読み込む -->
+<div th:replace="~{layout :: footer}"></div>
+<script>
+    function showGodMessage() {
+        const overlay = document.getElementById("god-message");
+        overlay.style.display = "flex";
+        const audio = document.getElementById('audio');
+        audio.currentTime = 0; // 最初から再生
+        audio.play();
+
+        // 3秒後に停止//
+        setTimeout(() => {
+            audio.pause();
+            audio.currentTime = 0; // 再度最初からに戻す
+        }, 3000);
+
+        // リクエストを飛ばしてランダムレシピIDを取得
+        fetch('/recipes/random-id')
+            .then(response => response.json())
+            .then(data => {
+                const recipeId = data.id;
+
+                setTimeout(() => {
+                    window.location.href = `/recipes/${recipeId}`;
+                }, 3000); // 1// 秒後に遷移
+            });
+    }
+</script>
+</body>
+</html>

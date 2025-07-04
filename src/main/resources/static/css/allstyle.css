@@ -1,0 +1,93 @@
+/* 背景と基本フォント設定 */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+body {
+    background-color: #fff8f0;
+    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* フッターを最下部に固定するためのFlex設定 */
+.layout-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    height: 100%;
+}
+
+/* メインエリアが残り高さを埋めるようにする */
+main {
+    flex: 1;
+    padding: 2em;
+    max-width: 1000px;
+    margin: auto;
+}
+
+/* ヘッダー全体 */
+.header {
+    background-color: #ff8800;
+    position: relative;
+    padding: 2em 0;
+    text-align: center;
+}
+
+/* ナビゲーション中央表示 */
+.nav-center {
+    display: inline-block;
+}
+
+.nav-center a {
+    color: white;
+    text-decoration: none;
+    margin: 0 1em;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: opacity 0.2s;
+}
+
+.nav-center a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+/* ロゴ画像を左上に固定（調整しやすく） */
+.header-logo {
+    position: absolute;
+    top: 10px;
+    left: 30px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.header-line {
+    margin-top: 5px;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    margin-top: 1em;
+}
+
+/* フッター */
+footer {
+    text-align: center;
+    padding: 1em;
+    background-color: #ffe0b3;
+    font-size: 0.9em;
+    color: #333;
+    margin-top: 5rem;
+}
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* 見出し調整 */
+h2 {
+    margin-left: 50px;
+}

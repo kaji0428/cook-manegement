@@ -1,0 +1,123 @@
+/* 全体カード */
+.detail-wrapper {
+    max-width: 900px;
+    margin: 2em auto;
+    padding: 2em;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+}
+
+/* 上部：画像と情報の横並び */
+.detail-top {
+    display: flex;
+    gap: 2em;
+}
+
+/* 画像 */
+.detail-image {
+    margin-top: 50px;
+    width: 450px;
+    height: 400px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* タイトル・サブタイトル・材料 */
+.detail-content {
+    margin-left: 50px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* タイトル */
+.detail-content h2 {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 0.3em;
+}
+
+/* サブタイトル（キャッチコピー）をオレンジに */
+.short-description {
+    font-weight: bold;
+    color: #ff8800;
+    margin-bottom: 1em;
+}
+
+/* 材料 */
+.ingredients h3 {
+    margin-top: 0.5em;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.ingredients ul {
+    padding-left: 1em;
+    margin: 0;
+}
+
+.ingredients li {
+    margin-bottom: 0.5em;
+}
+
+/* 下部：説明や日付など全幅 */
+.detail-bottom {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 説明文 */
+.description {
+    font-size: 1em;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 1em;
+    margin-left: 2em;
+}
+
+/* 投稿日 */
+.date {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 1.5em;
+}
+
+/* ボタン類 */
+.edit-button,
+.delete-button {
+    padding: 0.5em 1.2em;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1em;
+    min-width: 100px;
+    text-align: center;
+}
+
+.edit-button {
+    background-color: #66bb6a;
+    color: #fff;
+    margin-left: 20em;
+}
+
+.edit-button:hover {
+    background-color: #388e3c;
+}
+
+.delete-button {
+    background-color: #ef5350;
+    color: #fff;
+    margin-left: 1rem;
+}
+
+.delete-button:hover {
+    background-color: #c62828;
+}
+

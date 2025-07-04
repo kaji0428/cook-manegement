@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">料理管理アプリ</title>
+    <link rel="stylesheet" th:href="@{/css/allstyle.css}">
+</head>
+<body class="layout-body">
+
+<div class="page-wrapper">
+    <header class="header">
+        <img src="/images/cookgod_logo2.png" alt="CookGODロゴ" class="header-logo">
+        <nav class="nav-center">
+            <a th:href="@{/recipes}">レシピ一覧</a>
+            <a th:href="@{/recipes/new}">レシピ登録</a>
+        </nav>
+        <div class="header-line"></div>
+    </header>
+
+    <main layout:fragment="content">
+        <!-- 子テンプレートがここに差し込まれます -->
+    </main>
+
+    <footer class="footer" th:fragment="footer">
+        <hr>
+        <p>&copy; 2025 Cooking App</p>
+    </footer>
+</div>
+
+
+</body>
+</html>
