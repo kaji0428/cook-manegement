@@ -14,6 +14,11 @@
         <nav class="nav-center">
             <a th:href="@{/recipes}">レシピ一覧</a>
             <a th:href="@{/recipes/new}">レシピ登録</a>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit">
+                    ログアウト
+                </button>
+            </form>
         </nav>
         <div class="header-line"></div>
     </header>
@@ -28,6 +33,8 @@
     </footer>
 </div>
 
+<!-- 🔽 子テンプレートの script がここに入る -->
+<div layout:fragment="scripts"></div>
 
 </body>
 </html>

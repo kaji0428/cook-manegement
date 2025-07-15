@@ -14,3 +14,9 @@ CREATE TABLE ingredients (
                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                              FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id)
 );
+CREATE TABLE users (
+ user_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+ username VARCHAR(255) UNIQUE NOT NULL,
+ password VARCHAR(60) NOT NULL,
+ created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -69,27 +69,29 @@
 
 <div th:replace="~{layout :: footer}"></div>
 
-<!-- 材料追加・削除のJS -->
-<script th:inline="javascript">
-  let ingredientIndex = [[${#lists.size(recipeForm.ingredients)}]];
+<!-- 🔽 layout.html の <div layout:fragment="scripts"> に差し込まれる -->
+<div layout:fragment="scripts">
+  <script th:inline="javascript">
+    let ingredientIndex = /*[[${#lists.size(recipeForm.ingredients) ?: 0}]]*/ 0;
 
-  function addIngredient() {
-    const container = document.getElementById("ingredient-container");
-    const div = document.createElement("div");
-    div.className = "ingredient-row";
-    div.innerHTML = `
-      <input type="text" name="ingredients[${ingredientIndex}].name" placeholder="材料名" class="ingredient-name" />
-      <input type="text" name="ingredients[${ingredientIndex}].quantity" placeholder="分量" class="ingredient-quantity" />
-      <button type="button"  style="margin: 0px" class="remove-button" onclick="removeIngredient(this)" >✕</button>
-    `;
-    container.prepend(div);
-    ingredientIndex++;
-  }
+    function addIngredient() {
+      const container = document.getElementById("ingredient-container");
+      const div = document.createElement("div");
+      div.className = "ingredient-row";
+      div.innerHTML = `
+        <input type="text" name="ingredients[${ingredientIndex}].name" placeholder="材料名" class="ingredient-name" />
+        <input type="text" name="ingredients[${ingredientIndex}].quantity" placeholder="分量" class="ingredient-quantity" />
+        <button type="button" style="margin: 0px" class="remove-button" onclick="removeIngredient(this)">✕</button>
+      `;
+      container.prepend(div);
+      ingredientIndex++;
+    }
 
-  function removeIngredient(button) {
-    button.parentElement.remove();
-  }
-</script>
+    function removeIngredient(button) {
+      button.parentElement.remove();
+    }
+  </script>
+</div>
 
 </body>
 </html>
