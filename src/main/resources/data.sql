@@ -130,3 +130,5 @@ INSERT INTO ingredients (name, quantity, recipe_id, created_at) VALUES
                                                                     ('ケチャップ', '大さじ2', 6, CURRENT_TIMESTAMP),
                                                                     ('サラダ油', '適量', 6, CURRENT_TIMESTAMP),
                                                                     ('塩こしょう', '少々', 6, CURRENT_TIMESTAMP);
+-- PW は「track」
+INSERT INTO users (username, password) VALUES ('sample', '$2a$08$hBocxV325GV9RKzHR.lHreJr8DsMrkg6vg0kRTbNnBvUFknu670GC');

@@ -203,6 +203,14 @@ public class RecipeController {
 
         return result;
     }
+    @Controller
+    public class HomeController {
+
+        @GetMapping("/")
+        public String showRecipeList() {
+            return "recipe-list";
+        }
+    }
 
 
 }
