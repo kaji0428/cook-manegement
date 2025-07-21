@@ -1,5 +1,5 @@
 /* フォーム全体を中央に白背景で表示 */
-form {
+ #recipe-form  {
     max-width: 700px;
     margin: 2em auto;
     padding: 2em;
