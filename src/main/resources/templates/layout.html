@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+    >
 <head>
     <meta charset="UTF-8">
     <title th:text="${title}">料理管理アプリ</title>
@@ -12,10 +14,11 @@
     <header class="header">
         <img src="/images/cookgod_logo2.png" alt="CookGODロゴ" class="header-logo">
         <nav class="nav-center">
-            <a th:href="@{/recipes}">レシピ一覧</a>
-            <a th:href="@{/recipes/new}">レシピ登録</a>
-            <form th:action="@{/logout}" method="post" style="display:inline;">
-                <button type="submit">
+                <li sec:authorize="isAuthenticated()"><a th:href="@{/recipes}">レシピ一覧</a></li>
+            <li><a th:href="@{/recipes/new}">レシピ登録</a></li>
+            <li><a th:href="@{/register}">ユーザ登録</a></li>
+            <form id="logout-form" th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" id="logout-button">
                     ログアウト
                 </button>
             </form>

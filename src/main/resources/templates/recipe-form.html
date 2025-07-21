@@ -15,7 +15,7 @@
 <section layout:fragment="content">
   <h2>レシピフォーム</h2>
 
-  <form th:action="@{/recipes/update}" th:object="${recipeForm}" method="post" enctype="multipart/form-data">
+  <form  id="recipe-form" th:action="@{/recipes/update}" th:object="${recipeForm}" method="post" enctype="multipart/form-data">
 
     <!-- 編集時にIDをhiddenで渡す -->
     <input type="hidden" name="recipeId" th:if="${recipeId != null}" th:value="${recipeId}">
@@ -62,7 +62,7 @@
     <input type="hidden" name="originalImagePath" th:value="${recipeForm.imagePath}">
 
     <!-- 登録 or 更新 -->
-    <button type="submit" th:text="${recipeId != null ? '更新する' : '登録する'}">登録する</button>
+    <button  type="submit" th:text="${recipeId != null ? '更新する' : '登録する'}">登録する</button>
 
   </form>
 </section>
