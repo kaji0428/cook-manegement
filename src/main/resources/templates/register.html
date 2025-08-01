@@ -1,20 +1,29 @@
 <!DOCTYPE html>
-<html lang="ja" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout :: head(ユーザ登録)}"></head>
+<html lang="ja"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+  <title>ユーザ登録</title>
+  <link rel="stylesheet" th:href="@{/css/allstyle.css}">
+</head>
+
 <body>
-<div th:replace="~{layout :: header}"></div>
-<h3>ユーザ登録</h3>
-<form th:action="@{/register}" th:object="${userForm}" method="post">
-  <div>
-    <label for="username">ユーザ名：</label>
-    <input type="text" id="username" name="username" th:field="*{username}">
-  </div>
-  <div>
-    <label for="password">パスワード： </label>
-    <input type="password" id="password" name="password" th:field="*{password}">
-  </div>
-  <button type="submit">登録</button>
-</form>
-<div th:replace="~{layout :: footer}"></div>
+<!-- ✅ ここでは mainタグを書かず、fragment指定だけ -->
+<div layout:fragment="content">
+  <h3>ユーザ登録</h3>
+  <form th:action="@{/register}" th:object="${userForm}" method="post">
+    <div>
+      <label th:for="*{username}">ユーザ名：</label>
+      <input type="text" th:field="*{username}">
+    </div>
+    <div>
+      <label th:for="*{password}">パスワード：</label>
+      <input type="password" th:field="*{password}">
+    </div>
+    <button type="submit">登録</button>
+  </form>
+</div>
 </body>
 </html>
