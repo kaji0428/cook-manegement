@@ -21,7 +21,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/css/**", "/images/**", "/kami.mp3",
-                                "/login", "/logout"
+                                "/login", "/logout","/register"
                         ).permitAll()
                         .requestMatchers(
                                 "/recipes/new", "/recipes/edit/**",

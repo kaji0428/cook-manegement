@@ -14,11 +14,11 @@
     <header class="header">
         <img src="/images/cookgod_logo2.png" alt="CookGODロゴ" class="header-logo">
         <nav class="nav-center">
-                <li sec:authorize="isAuthenticated()"><a th:href="@{/recipes}">レシピ一覧</a></li>
-            <li><a th:href="@{/recipes/new}">レシピ登録</a></li>
-            <li><a th:href="@{/register}">ユーザ登録</a></li>
+            <a sec:authorize="isAuthenticated()" th:href="@{/recipes}">レシピ一覧</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/recipes/new}">レシピ登録</a>
+           <a sec:authorize="isAnonymous()" th:href="@{/register}">ユーザ登録</a>
             <form id="logout-form" th:action="@{/logout}" method="post" style="display:inline;">
-                <button type="submit" id="logout-button">
+                <button sec:authorize="isAuthenticated()" type="submit" id="logout-button">
                     ログアウト
                 </button>
             </form>
