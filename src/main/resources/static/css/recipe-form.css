@@ -42,7 +42,7 @@ form textarea {
     resize: vertical;
 }
 
-form button {
+#recipe-form button[type="submit"] {
     display: block;        /* ブロック要素にして */
     margin: 2em auto 0;    /* 上に余白をつけて中央寄せ */
     background-color: #66bb6a;
