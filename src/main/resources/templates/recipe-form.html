@@ -13,7 +13,7 @@
 <div th:replace="~{layout :: header}"></div>
 
 <section layout:fragment="content">
-  <h2>レシピフォーム</h2>
+  <h2 style="margin-left: 50px;">レシピフォーム</h2>
 
   <form  id="recipe-form" th:action="@{/recipes/update}" th:object="${recipeForm}" method="post" enctype="multipart/form-data">
 
