@@ -12,10 +12,6 @@
 
 <main layout:fragment="content"> <!-- ✅ ここだけが描画対象 -->
 
-    <div class="god-button-container">
-        <button type="button" onclick="showGodMessage()" class="god-button">✨ GOD ✨</button>
-    </div>
-
     <!-- モーダルのようなメッセージ表示 -->
     <div id="god-message" class="god-overlay" style="display: none;">
         <div class="god-message-box">✨ 今日の一品はこれ！ ✨</div>
@@ -29,6 +25,7 @@
                 <input type="text" name="keyword" placeholder="料理名で検索" th:value="${keyword}">
                 <button type="submit">検索</button>
             </form>
+            <button type="button" onclick="showGodMessage()" class="god-button">✨ GOD ✨</button>
         </div>
 
         <ul>

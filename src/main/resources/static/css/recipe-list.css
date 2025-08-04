@@ -20,7 +20,6 @@ section h2 {
 .recipe-header form {
     display: flex;
     align-items: center;
-    padding-right: 25rem;
 }
 
 .recipe-header input[type="text"] {
@@ -31,7 +30,7 @@ section h2 {
     font-size: 1em;
 }
 
-.recipe-header button {
+.recipe-header form button {
     padding: 0.5em 1em;
     margin-left: 0.5em;
     background-color: #ff8800;
@@ -42,8 +41,16 @@ section h2 {
     cursor: pointer;
 }
 
-.recipe-header button:hover {
+.recipe-header form button:hover {
     background-color: #e67600;
+}
+
+.god-button {
+    background-color: #ff4444;
+}
+
+.god-button:hover {
+    background-color: #cc0000;
 }
 
 /* レシピリストのグリッド表示 */
@@ -110,14 +117,6 @@ li a:hover {
 }
 #no-recipes{
     margin-bottom: 14em;
-}
-.god-button-container {
-    margin-top: 120px;
-    margin-right: 210px;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 1000;
 }
 
 .god-button {
