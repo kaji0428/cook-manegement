@@ -3,6 +3,8 @@ import com.example.cookingmanagement.form.UserForm;
 import com.example.cookingmanagement.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -18,7 +20,11 @@ public class RegistrationController {
         return "register";
     }
     @PostMapping("/register")
-    public String registerUser(UserForm userForm) {
+    public String registerUser(@Validated UserForm userForm, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("userForm", userForm);
+            return "register";
+        }
         userService.createUser(userForm);
         return "redirect:/login?register";
     }
