@@ -7,23 +7,28 @@
 <head>
   <title>ユーザ登録</title>
   <link rel="stylesheet" th:href="@{/css/allstyle.css}">
+  <link rel="stylesheet" th:href="@{/css/login-register.css}">
 </head>
 
 <body>
-<!-- ✅ ここでは mainタグを書かず、fragment指定だけ -->
 <div layout:fragment="content">
-  <h3>ユーザ登録</h3>
-  <form th:action="@{/register}" th:object="${userForm}" method="post">
-    <div>
-      <label th:for="*{username}">ユーザ名：</label>
-      <input type="text" th:field="*{username}">
-    </div>
-    <div>
-      <label th:for="*{password}">パスワード：</label>
-      <input type="password" th:field="*{password}">
-    </div>
-    <button type="submit">登録</button>
-  </form>
+  <a th:href="@{/login}" class="back-to-login-button">ログイン画面に戻る</a>
+  <div class="form-container">
+    <h3>ユーザ登録</h3>
+    <form th:action="@{/register}" th:object="${userForm}" method="post">
+      <div class="form-group">
+        <label th:for="*{username}">ユーザ名：</label>
+        <input type="text" th:field="*{username}">
+        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error-message"></p>
+      </div>
+      <div class="form-group">
+        <label th:for="*{password}">パスワード：</label>
+        <input type="password" th:field="*{password}">
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></p>
+      </div>
+      <button type="submit">登録</button>
+    </form>
+  </div>
 </div>
 </body>
 </html>

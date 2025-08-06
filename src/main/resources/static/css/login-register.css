@@ -1,0 +1,87 @@
+/* ログイン・登録フォーム共通スタイル */
+.form-container {
+    max-width: 700px;
+    margin: 4em  auto  0 auto;
+    padding: 2em;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    color: #333;
+}
+
+.form-container h3 {
+    text-align: center;
+    margin-bottom: 1.5em;
+}
+
+.form-container .form-group {
+    margin-bottom: 1.5em;
+    min-height: 90px; /* エラーメッセージでずれないように高さを確保 */
+}
+
+.form-container label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    color: #444;
+}
+
+.form-container input[type="text"],
+.form-container input[type="password"] {
+    width: 100%;
+    padding: 0.8em;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.form-container .error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-top: 0.5em;
+}
+
+.form-container .success-message {
+    color: blue;
+    font-size: 0.9em;
+    margin-bottom: 1em;
+    text-align: center;
+}
+
+.form-container button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 0.8em;
+    background-color: #ff8800;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+}
+
+.form-container button[type="submit"]:hover {
+    background-color: #e67600;
+}
+
+.back-to-login-button {
+    position: absolute;
+    top: 140px;
+    left: 20px;
+    text-decoration: none;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    transition: background-color 0.3s;
+}
+
+.back-to-login-button:hover {
+    background-color: #e0e0e0;
+}
