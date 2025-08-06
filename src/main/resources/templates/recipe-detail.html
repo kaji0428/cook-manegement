@@ -2,22 +2,25 @@
 <html lang="ja" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
+
 <head>
   <title th:text="${recipe.title}">レシピ詳細</title>
   <link rel="stylesheet" th:href="@{/css/allstyle.css}">
   <link rel="stylesheet" th:href="@{/css/recipe-detail.css}">
 </head>
-<body>
-<div th:replace="~{layout :: header}"></div>
-<h2 style="margin-left: 50px;">料理詳細</h2>
-<section layout:fragment="content" class="detail-wrapper">
+
+<main layout:fragment="content" class="detail-wrapper">
 
   <!-- 上部：画像 + 情報横並び -->
   <div class="detail-top">
     <img class="detail-image" th:src="@{'/' + ${recipe.imagePath}}" alt="画像">
 
     <div class="detail-content">
+        <span class="favorite-star"
+              th:attr="data-recipe-id=${recipe.recipeId}, data-favorited=${recipe.favorited}"
+              th:text="${recipe.favorited ? '★' : '☆'}"></span>
       <h2 th:text="${recipe.title}">料理名</h2>
+
       <p class="short-description" th:text="${recipe.shortDescription ?: 'キャッチコピーなし'}">キャッチコピー</p>
 
       <div class="ingredients">
@@ -36,21 +39,63 @@
   <div class="detail-bottom">
     <p class="description" th:utext="${safeDescription}">説明文</p>
     <div class="bottom-meta">
-    <p class="date">
-      投稿日：
-      <span th:text="${recipe.createdAt != null ? #dates.format(recipe.createdAt, 'yyyy年MM月dd日') : '未登録'}">日付</span>
-    </p>
+      <p class="date">
+        投稿日：
+        <span th:text="${recipe.createdAt != null ? #dates.format(recipe.createdAt, 'yyyy年MM月dd日') : '未登録'}">日付</span>
+      </p>
 
-    <div class="button-group">
-      <a class="edit-button" th:href="@{|/recipes/edit/${recipe.recipeId}|}">編集する</a>
-      <form th:action="@{|/recipes/delete/${recipe.recipeId}|}" method="post" style="display:inline;">
-        <button class="delete-button" type="submit" onclick="return confirm('本当に削除しますか？')">削除する</button>
-      </form>
-    </div>
+      <div class="button-group">
+        <a class="edit-button" th:href="@{|/recipes/edit/${recipe.recipeId}|}">編集する</a>
+        <form th:action="@{|/recipes/delete/${recipe.recipeId}|}" method="post" style="display:inline;">
+          <button class="delete-button" type="submit" onclick="return confirm('本当に削除しますか？')">削除する</button>
+        </form>
+      </div>
     </div>
   </div>
-</section>
+</main>
 
-<div th:replace="~{layout :: footer}"></div>
-</body>
+<!-- JSスクリプト -->
+<div layout:fragment="scripts">
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const star = document.querySelector('.favorite-star');
+      const csrfTokenMeta = document.querySelector('meta[name="_csrf"]');
+      const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+
+      if (star) {
+        star.addEventListener('click', () => {
+          const recipeId = star.dataset.recipeId;
+
+          // 未ログインならログインページへ
+          if (!csrfTokenMeta || !csrfHeaderMeta) {
+            window.location.href = '/login';
+            return;
+          }
+
+          const headers = { 'Content-Type': 'application/json' };
+          headers[csrfHeaderMeta.getAttribute('content')] = csrfTokenMeta.getAttribute('content');
+
+          fetch(`/recipes/${recipeId}/favorite`, {
+            method: 'POST',
+            headers: headers
+          })
+                  .then(response => {
+                    if (response.redirected) {
+                      window.location.href = response.url;
+                      return;
+                    }
+                    return response.json();
+                  })
+                  .then(data => {
+                    if (data) {
+                      star.textContent = data.favorited ? '★' : '☆';
+                      star.dataset.favorited = data.favorited;
+                    }
+                  });
+        });
+      }
+    });
+  </script>
+</div>
+
 </html>

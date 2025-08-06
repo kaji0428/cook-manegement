@@ -29,4 +29,13 @@ public interface RecipeMapper {
 
     @Select("SELECT * FROM recipes WHERE title LIKE #{title}")
     List<Recipe> findByTitleLike(String title);
+
+    @Insert("INSERT INTO favorites (user_id, recipe_id) VALUES (#{userId}, #{recipeId})")
+    void insertFavorite(@Param("userId") int userId, @Param("recipeId") int recipeId);
+
+    @Delete("DELETE FROM favorites WHERE user_id = #{userId} AND recipe_id = #{recipeId}")
+    void deleteFavorite(@Param("userId") int userId, @Param("recipeId") int recipeId);
+
+    @Select("SELECT COUNT(*) FROM favorites WHERE user_id = #{userId} AND recipe_id = #{recipeId}")
+    int countFavorite(@Param("userId") int userId, @Param("recipeId") int recipeId);
 }

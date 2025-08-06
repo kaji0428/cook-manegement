@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="ja"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -20,7 +19,6 @@
     <section>
         <div class="recipe-header">
             <h2>レシピ一覧</h2>
-
             <form method="get" action="/recipes">
                 <input type="text" name="keyword" placeholder="料理名で検索" th:value="${keyword}">
                 <button type="submit">検索</button>
@@ -33,7 +31,11 @@
                 該当する料理はありません。
             </li>
 
-            <li th:each="recipe : ${recipes}">
+            <li th:each="recipe : ${recipes}" class="recipe-card">
+                <!-- 星をliの右上に配置 -->
+                <span class="favorite-star"
+                      th:attr="data-recipe-id=${recipe.recipeId}, data-favorited=${recipe.favorited}"
+                      th:text="${recipe.favorited ? '★' : '☆'}"></span>
                 <img th:src="@{${'/' + recipe.imagePath}}" alt="画像">
                 <div class="text-block">
                     <strong th:text="${recipe.title ?: 'タイトルなし'}">料理名</strong><br>
@@ -47,6 +49,10 @@
 
     <audio id="audio" th:src="@{/kami.mp3}"></audio>
 
+</main>
+
+<!-- JSスクリプトはscriptsフラグメントで追加 -->
+<div layout:fragment="scripts">
     <script>
         function showGodMessage() {
             const overlay = document.getElementById("god-message");
@@ -69,7 +75,47 @@
                     }, 3000);
                 });
         }
-    </script>
 
-</main>
+        document.addEventListener('DOMContentLoaded', () => {
+            const csrfTokenMeta = document.querySelector('meta[name="_csrf"]');
+            const csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
+
+            document.querySelectorAll('.favorite-star').forEach(star => {
+                star.addEventListener('click', () => {
+                    const recipeId = star.dataset.recipeId;
+
+                    // CSRFトークンがない場合（未ログイン）はログインページへ
+                    if (!csrfTokenMeta || !csrfHeaderMeta) {
+                        window.location.href = '/login';
+                        return;
+                    }
+
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    };
+                    headers[csrfHeaderMeta.getAttribute('content')] = csrfTokenMeta.getAttribute('content');
+
+                    fetch(`/recipes/${recipeId}/favorite`, {
+                        method: 'POST',
+                        headers: headers
+                    })
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url; // 未ログインならログイン画面へ
+                                return;
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data) {
+                                star.textContent = data.favorited ? '★' : '☆';
+                                star.dataset.favorited = data.favorited;
+                            }
+                        });
+                });
+            });
+        });
+    </script>
+</div>
+
 </html>

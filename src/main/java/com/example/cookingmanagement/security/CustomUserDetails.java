@@ -57,4 +57,8 @@ public class CustomUserDetails implements UserDetails, Serializable {
     public User getUser() {
         return user;
     }
+
+    public int getUserId() {
+        return user.getUserId();
+    }
 }

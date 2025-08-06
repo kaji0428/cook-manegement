@@ -3,6 +3,7 @@ package com.example.cookingmanagement.entity;
 import java.sql.Timestamp;
 import java.util.List;
 import com.example.cookingmanagement.entity.Ingredient;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * レシピ情報を表すエンティティクラス。
@@ -28,6 +29,9 @@ public class Recipe {
 
     // 登録日時（タイムスタンプ）
     private Timestamp createdAt;
+
+    // このレシピが現在のユーザーにお気に入り登録されているか
+    private boolean favorited;
 
     // --- Getter / Setter ---
 
@@ -79,6 +83,14 @@ public class Recipe {
         this.createdAt = createdAt;
     }
 
+    public boolean isFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(boolean favorited) {
+        this.favorited = favorited;
+    }
+
     // 材料リスト（このレシピに紐づく材料たち）
     private List<Ingredient> ingredients;
 
@@ -89,5 +101,6 @@ public class Recipe {
     public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
+
 
 }

@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import org.springframework.http.ResponseEntity;
 
 @Controller // コントローラクラスとして認識されるアノテーション
 public class RecipeController {
@@ -203,6 +204,13 @@ public class RecipeController {
 
         return result;
     }
+
+    @PostMapping("/recipes/{id}/favorite")
+    @ResponseBody
+    public ResponseEntity<Map<String, Boolean>> toggleFavorite(@PathVariable("id") int id) {
+        boolean favorited = recipeService.toggleFavorite(id);
+        return ResponseEntity.ok(Collections.singletonMap("favorited", favorited));
+    }
     @Controller
     public class HomeController {
 
@@ -211,6 +219,7 @@ public class RecipeController {
             return "recipe-list";
         }
     }
+
 
 
 }

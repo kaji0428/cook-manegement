@@ -2,10 +2,8 @@ package com.example.cookingmanagement.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,16 +15,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                // CSRFを有効化（デフォルトで有効）
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/css/**", "/images/**", "/kami.mp3"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/css/**", "/images/**", "/kami.mp3",
-                                "/login", "/logout","/register"
+                                "/login", "/logout", "/register"
                         ).permitAll()
                         .requestMatchers(
                                 "/recipes/new", "/recipes/edit/**",
                                 "/recipes/update", "/recipes/delete/**",
-                                "/recipes"
+                                "/recipes/**"
                         ).authenticated()
                         .anyRequest().authenticated()
                 )
@@ -41,8 +40,9 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
-    public PasswordEncoder PasswordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
