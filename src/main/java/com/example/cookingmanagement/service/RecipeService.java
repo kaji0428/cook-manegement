@@ -7,6 +7,9 @@ import com.example.cookingmanagement.form.RecipeForm;
 import com.example.cookingmanagement.mapper.IngredientMapper;
 import com.example.cookingmanagement.mapper.RecipeConvertMapper;
 import com.example.cookingmanagement.mapper.RecipeMapper;
+import com.example.cookingmanagement.security.CustomUserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -27,7 +30,14 @@ public class RecipeService {
     }
 
     public List<Recipe> getAllRecipes() {
-        return recipeMapper.findAll();
+        List<Recipe> recipes = recipeMapper.findAll();
+        Integer userId = getLoginUserId();
+        if (userId != null) {
+            for (Recipe recipe : recipes) {
+                recipe.setFavorited(recipeMapper.countFavorite(userId, recipe.getRecipeId()) > 0);
+            }
+        }
+        return recipes;
     }
 
     public Recipe getRecipeById(int id) {
@@ -37,6 +47,10 @@ public class RecipeService {
         }
 
         recipe.setIngredients(ingredientMapper.findIngredientsByRecipeId(id));
+        Integer userId = getLoginUserId();
+        if (userId != null) {
+            recipe.setFavorited(recipeMapper.countFavorite(userId, recipe.getRecipeId()) > 0);
+        }
         return recipe;
     }
 
@@ -103,6 +117,30 @@ public class RecipeService {
 
     public List<Recipe> searchByTitle(String keyword) {
         return recipeMapper.findByTitleLike("%" + keyword + "%");
+    }
+
+    public boolean toggleFavorite(int recipeId) {
+        Integer userId = getLoginUserId();
+        if (userId == null) {
+            return false; // ログインしていない場合は何もしない
+        }
+
+        boolean isFavorited = recipeMapper.countFavorite(userId, recipeId) > 0;
+        if (isFavorited) {
+            recipeMapper.deleteFavorite(userId, recipeId);
+        } else {
+            recipeMapper.insertFavorite(userId, recipeId);
+        }
+        return !isFavorited;
+    }
+
+    private Integer getLoginUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            return userDetails.getUserId();
+        }
+        return null;
     }
 
     private List<IngredientForm> convertIngredientsToForm(List<Ingredient> ingredients) {

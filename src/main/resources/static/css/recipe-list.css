@@ -32,13 +32,23 @@ section h2 {
 
 .recipe-header form button {
     padding: 0.5em 1em;
-    margin-left: 0.5em;
+    margin-left: auto; /* 右寄せ */
+}
+
+.favorite-star {
+    font-size: 24px;
+    cursor: pointer;
+    color: #ffc107;
+}
+.recipe-header form button {
     background-color: #ff8800;
     color: white;
     border: none;
     border-radius: 6px;
+    font-size: 1em;
     font-weight: bold;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .recipe-header form button:hover {
@@ -157,3 +167,28 @@ li a:hover {
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.2);
 }
+.recipe-card {
+    position: relative; /* 星を絶対位置で置くため */
+    padding-top: 30px;  /* 星がかぶらないよう上部に余白 */
+    padding-right: 10px;
+}
+.favorite-star {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 32px;
+    color: gold;
+    cursor: pointer;
+    /* 黒い縁取り */
+    -webkit-text-stroke: 1px black;
+    text-stroke: 1px black; /* Firefoxなどの一部ブラウザ用 */
+}
+.favorite-star:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
+}
+.favorite-star:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s ease;
+}
+
