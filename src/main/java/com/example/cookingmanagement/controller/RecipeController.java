@@ -5,8 +5,13 @@ import com.example.cookingmanagement.entity.Recipe;
 import com.example.cookingmanagement.form.IngredientForm;
 import com.example.cookingmanagement.form.RecipeForm;
 import com.example.cookingmanagement.service.RecipeService;
+import com.example.cookingmanagement.service.CommentService;
+import com.example.cookingmanagement.form.CommentForm;
+import com.example.cookingmanagement.entity.Comment;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.HtmlUtils;
@@ -24,10 +29,12 @@ public class RecipeController {
 
     // サービスクラスのインスタンスを用意
     private final RecipeService recipeService;
+    private final CommentService commentService;
 
     // コンストラクタでDI（依存性注入）
-    public RecipeController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService, CommentService commentService) {
         this.recipeService = recipeService;
+        this.commentService = commentService;
     }
 
     /**
@@ -56,21 +63,27 @@ public class RecipeController {
     @GetMapping("/recipes/{id}")
     public String showRecipeDetail(@PathVariable("id") int id, Model model, Principal principal) {
         Recipe recipe = recipeService.getRecipeById(id);
+        if (recipe == null) {
+            return "redirect:/recipes";
+        }
 
-        // 説明文をXSS対策して改行を <br> に変換
-        String safeDescription = HtmlUtils.htmlEscape(recipe.getDescription());
-        safeDescription = safeDescription.replace("\n", "<br>");
+        // 必ず description が null でないようにしつつ改行変換
+        String rawDescription = recipe.getDescription() != null ? recipe.getDescription() : "";
+        String safeDescription = HtmlUtils.htmlEscape(rawDescription).replace("\n", "<br>");
 
-        // ログインユーザーが投稿者かどうかを判定
         boolean isOwner = false;
         if (principal != null && recipe.getUser() != null) {
-            String loggedInUsername = principal.getName(); // ログイン中のユーザー名
+            String loggedInUsername = principal.getName();
             isOwner = recipe.getUser().getUsername().equals(loggedInUsername);
         }
 
+        List<Comment> comments = commentService.getCommentsByRecipeId(id);
+
         model.addAttribute("recipe", recipe);
         model.addAttribute("safeDescription", safeDescription);
-        model.addAttribute("isOwner", isOwner); // ← 投稿者なら true
+        model.addAttribute("isOwner", isOwner);
+        model.addAttribute("comments", comments);
+        model.addAttribute("commentForm", new CommentForm());
 
         return "recipe-detail";
     }
@@ -241,5 +254,34 @@ public class RecipeController {
         model.addAttribute("recipes", recipes);
         model.addAttribute("pageTitle", "自分のレシピ"); // ページタイトルを設定
         return "recipe-list";
+    }
+
+    @PostMapping("/recipes/{recipeId}/comments")
+    @ResponseBody
+    public ResponseEntity<?> addComment(@PathVariable("recipeId") int recipeId,
+                                           @Valid @RequestBody CommentForm commentForm,
+                                           BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            // エラー内容をMapに詰めて返す
+            Map<String, String> fieldErrors = new HashMap<>();
+            bindingResult.getFieldErrors().forEach(error ->
+                    fieldErrors.put(error.getField(), error.getDefaultMessage())
+            );
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Validation failed");
+            errorResponse.put("errors", fieldErrors); // errors を Map<String, String> に変更
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
+        commentForm.setRecipeId(recipeId);
+        Comment newComment = commentService.addComment(commentForm); // 保存されたコメントエンティティを受け取る
+
+        // 成功レスポンスに必要な情報をMapに詰めて返す
+        Map<String, Object> response = new HashMap<>();
+        response.put("commentText", newComment.getCommentText());
+        response.put("username", newComment.getUser().getUsername()); // ユーザー名を追加
+        response.put("createdAt", newComment.getCreatedAt().toString()); // 登録日時を追加
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -60,6 +60,34 @@
       </div>
     </div>
   </div>
+
+  <!-- コメントセクション -->
+  <div class="comments-section">
+    <h3>コメント</h3>
+
+    <!-- コメント投稿フォーム -->
+    <div class="comment-form">
+      <form id="comment-form" th:action="@{/recipes/{id}/comments(id=${recipe.recipeId})}" th:object="${commentForm}" method="post">
+        <div class="comment-input-row">
+          <textarea th:field="*{commentText}" rows="2" placeholder="コメントを入力してください"></textarea>
+          <button type="submit">投稿</button>
+        </div>
+        <div class="error-message" th:errors="*{commentText}"></div>
+      </form>
+    </div>
+
+    <!-- 既存のコメントリスト -->
+    <div class="comment-list">
+      <div th:each="comment : ${comments}" class="comment-wrapper">
+        <p class="comment-username" th:text="${comment.user?.username}"></p>
+        <div class="comment-item">
+          <p class="comment-text" th:text="${comment.commentText}"></p>
+          <p class="comment-date" th:text="${#temporals.format(comment.createdAt, 'yyyy年MM月dd日 HH:mm')}"></p>
+        </div>
+      </div>
+      <p th:if="${comments.isEmpty()}" class="no-comments-message">まだコメントはありません。</p>
+    </div>
+  </div>
 </main>
 
 <!-- JSスクリプト -->
@@ -102,6 +130,84 @@
                       favoriteCountSpan.textContent = data.favoriteCount;
                     }
                   });
+        });
+      }
+
+      // コメント投稿の非同期処理
+      const commentForm = document.getElementById('comment-form');
+      if (commentForm) {
+        commentForm.addEventListener('submit', async (event) => {
+          event.preventDefault(); // デフォルトのフォーム送信を防止
+
+          const recipeId = commentForm.action.split('/')[4]; // URLからrecipeIdを取得
+          const commentText = commentForm.querySelector('textarea[name="commentText"]').value;
+
+          const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : '';
+          const csrfHeader = csrfHeaderMeta ? csrfHeaderMeta.getAttribute('content') : '';
+
+          const headers = {
+            'Content-Type': 'application/json',
+          };
+          if (csrfHeader) {
+            headers[csrfHeader] = csrfToken;
+          }
+
+          const errorMessageDiv = commentForm.querySelector('.error-message'); // Moved up
+
+          try {
+            const response = await fetch(`/recipes/${recipeId}/comments`, {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify({ commentText: commentText })
+            });
+
+            if (response.redirected) {
+              window.location.href = response.url;
+              return;
+            }
+
+            const data = await response.json();
+
+            if (response.ok) {
+              // コメントが正常に投稿された場合
+              const commentListDiv = document.querySelector('.comment-list');
+              const noCommentsP = commentListDiv.querySelector('.no-comments-message'); // Corrected selector
+              if (noCommentsP) {
+                noCommentsP.remove(); // 「まだコメントはありません」を削除
+              }
+
+              const newCommentHtml = `
+                <div class="comment-wrapper">
+                  <p class="comment-username">${data.username}</p>
+                  <div class="comment-item">
+                    <p class="comment-text">${data.commentText}</p>
+                    <p class="comment-date">${data.createdAt}</p>
+                  </div>
+                </div>
+              `;
+              commentListDiv.insertAdjacentHTML('afterbegin', newCommentHtml); // 新しいコメントをリストの先頭に追加
+
+              commentForm.reset(); // フォームをリセット
+              if (errorMessageDiv) { // Check for null
+                errorMessageDiv.textContent = ''; // エラーメッセージをクリア
+              }
+            } else {
+              // エラーレスポンスの場合
+              const errorData = data.errors; // SpringのBindingResultエラーを想定
+              if (errorMessageDiv) { // Check for null
+                if (errorData && errorData.commentText) {
+                  errorMessageDiv.textContent = errorData.commentText; // エラーメッセージを表示
+                } else {
+                  errorMessageDiv.textContent = 'コメントの投稿に失敗しました。';
+                }
+              }
+            }
+          } catch (error) {
+            console.error('コメント投稿エラー:', error);
+            if (errorMessageDiv) { // Add null check here too
+              errorMessageDiv.textContent = 'コメントの投稿中にエラーが発生しました。';
+            }
+          }
         });
       }
     });

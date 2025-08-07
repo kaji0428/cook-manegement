@@ -30,5 +30,15 @@ CREATE TABLE favorites (
  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
  FOREIGN KEY (user_id) REFERENCES users(user_id),
  FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id),
- UNIQUE (user_id, recipe_id) -- 同じレシピを重複登録しない
+  UNIQUE (user_id, recipe_id) -- 同じレシピを重複登録しない
+);
+
+CREATE TABLE comments (
+    comment_id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    recipe_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    comment_text VARCHAR(1000) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (recipe_id) REFERENCES recipes(recipe_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
