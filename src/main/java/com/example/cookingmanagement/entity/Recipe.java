@@ -91,6 +91,16 @@ public class Recipe {
         this.favorited = favorited;
     }
 
+    private int favoriteCount;
+
+    public int getFavoriteCount() {
+        return favoriteCount;
+    }
+
+    public void setFavoriteCount(int favoriteCount) {
+        this.favoriteCount = favoriteCount;
+    }
+
     // 材料リスト（このレシピに紐づく材料たち）
     private List<Ingredient> ingredients;
 

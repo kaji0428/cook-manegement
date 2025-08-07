@@ -207,9 +207,9 @@ public class RecipeController {
 
     @PostMapping("/recipes/{id}/favorite")
     @ResponseBody
-    public ResponseEntity<Map<String, Boolean>> toggleFavorite(@PathVariable("id") int id) {
-        boolean favorited = recipeService.toggleFavorite(id);
-        return ResponseEntity.ok(Collections.singletonMap("favorited", favorited));
+    public ResponseEntity<Map<String, Object>> toggleFavorite(@PathVariable("id") int id) {
+        Map<String, Object> result = recipeService.toggleFavorite(id);
+        return ResponseEntity.ok(result);
     }
     @Controller
     public class HomeController {

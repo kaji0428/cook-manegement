@@ -38,4 +38,7 @@ public interface RecipeMapper {
 
     @Select("SELECT COUNT(*) FROM favorites WHERE user_id = #{userId} AND recipe_id = #{recipeId}")
     int countFavorite(@Param("userId") int userId, @Param("recipeId") int recipeId);
+
+    @Select("SELECT COUNT(*) FROM favorites WHERE recipe_id = #{recipeId}")
+    int countFavoriteByRecipeId(@Param("recipeId") int recipeId);
 }
