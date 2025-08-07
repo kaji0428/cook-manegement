@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class RecipeService {
@@ -51,6 +53,7 @@ public class RecipeService {
         if (userId != null) {
             recipe.setFavorited(recipeMapper.countFavorite(userId, recipe.getRecipeId()) > 0);
         }
+        recipe.setFavoriteCount(recipeMapper.countFavoriteByRecipeId(id));
         return recipe;
     }
 
@@ -119,10 +122,14 @@ public class RecipeService {
         return recipeMapper.findByTitleLike("%" + keyword + "%");
     }
 
-    public boolean toggleFavorite(int recipeId) {
+    public Map<String, Object> toggleFavorite(int recipeId) {
         Integer userId = getLoginUserId();
+        Map<String, Object> result = new HashMap<>();
+
         if (userId == null) {
-            return false; // ログインしていない場合は何もしない
+            result.put("favorited", false);
+            result.put("favoriteCount", recipeMapper.countFavoriteByRecipeId(recipeId));
+            return result;
         }
 
         boolean isFavorited = recipeMapper.countFavorite(userId, recipeId) > 0;
@@ -131,7 +138,10 @@ public class RecipeService {
         } else {
             recipeMapper.insertFavorite(userId, recipeId);
         }
-        return !isFavorited;
+
+        result.put("favorited", !isFavorited);
+        result.put("favoriteCount", recipeMapper.countFavoriteByRecipeId(recipeId));
+        return result;
     }
 
     private Integer getLoginUserId() {
