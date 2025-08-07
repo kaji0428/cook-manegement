@@ -57,6 +57,7 @@
     <!-- 画像アップロード -->
     <label for="imageFile">画像ファイル：</label>
     <input type="file" id="imageFile" name="imageFile">
+    <span id="current-file-name" style="margin-left: 10px;"></span>
 
     <!-- 編集時：元の画像パス -->
     <input type="hidden" name="originalImagePath" th:value="${recipeForm.imagePath}">
@@ -90,6 +91,21 @@
     function removeIngredient(button) {
       button.parentElement.remove();
     }
+
+    function removeIngredient(button) {
+      button.parentElement.remove();
+    }
+
+    // ページ読み込み時に、既存のファイル名を表示（編集時のみ）
+    document.addEventListener('DOMContentLoaded', () => {
+      const currentFileNameSpan = document.getElementById('current-file-name');
+      const originalPath = /*[[${recipeForm.imagePath}]]*/ null;
+
+      if (originalPath) {
+        // パスからファイル名だけを抽出して表示
+        currentFileNameSpan.textContent = `現在のファイル: ${originalPath.split('/').pop()}`;
+      }
+    });
   </script>
 </div>
 
