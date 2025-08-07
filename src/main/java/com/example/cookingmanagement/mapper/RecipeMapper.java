@@ -87,4 +87,43 @@ public interface RecipeMapper {
 
     @Select("SELECT COUNT(*) FROM favorites WHERE recipe_id = #{recipeId}")
     int countFavoriteByRecipeId(@Param("recipeId") int recipeId);
+
+    @Select("""
+        SELECT r.recipe_id, r.title, r.short_description, r.description, r.image_path, r.created_at,
+               r.user_id, u.username
+        FROM recipes r
+        JOIN favorites f ON r.recipe_id = f.recipe_id
+        LEFT JOIN users u ON r.user_id = u.user_id
+        WHERE f.user_id = #{userId}
+        """)
+    @Results({
+            @Result(property = "recipeId", column = "recipe_id"),
+            @Result(property = "title", column = "title"),
+            @Result(property = "shortDescription", column = "short_description"),
+            @Result(property = "description", column = "description"),
+            @Result(property = "imagePath", column = "image_path"),
+            @Result(property = "createdAt", column = "created_at"),
+            @Result(property = "user.userId", column = "user_id"),
+            @Result(property = "user.username", column = "username")
+    })
+    List<Recipe> findFavoriteRecipesByUserId(int userId);
+
+    @Select("""
+        SELECT r.recipe_id, r.title, r.short_description, r.description, r.image_path, r.created_at,
+               r.user_id, u.username
+        FROM recipes r
+        LEFT JOIN users u ON r.user_id = u.user_id
+        WHERE r.user_id = #{userId}
+        """)
+    @Results({
+            @Result(property = "recipeId", column = "recipe_id"),
+            @Result(property = "title", column = "title"),
+            @Result(property = "shortDescription", column = "short_description"),
+            @Result(property = "description", column = "description"),
+            @Result(property = "imagePath", column = "image_path"),
+            @Result(property = "createdAt", column = "created_at"),
+            @Result(property = "user.userId", column = "user_id"),
+            @Result(property = "user.username", column = "username")
+    })
+    List<Recipe> findRecipesByUserId(int userId);
 }

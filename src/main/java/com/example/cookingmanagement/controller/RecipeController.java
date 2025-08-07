@@ -214,21 +214,32 @@ public class RecipeController {
         return result;
     }
 
-    @PostMapping("/recipes/{id}/favorite")
+        @PostMapping("/recipes/{id}/favorite")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> toggleFavorite(@PathVariable("id") int id) {
         Map<String, Object> result = recipeService.toggleFavorite(id);
         return ResponseEntity.ok(result);
     }
-    @Controller
-    public class HomeController {
 
-        @GetMapping("/")
-        public String showRecipeList() {
-            return "recipe-list";
-        }
+    /**
+     * お気に入りレシピ一覧画面を表示するメソッド
+     */
+    @GetMapping("/recipes/favorites")
+    public String showFavoriteRecipes(Model model) {
+        List<Recipe> recipes = recipeService.getFavoriteRecipes();
+        model.addAttribute("recipes", recipes);
+        model.addAttribute("pageTitle", "お気に入りレシピ"); // ページタイトルを設定
+        return "recipe-list";
     }
 
-
-
+    /**
+     * 自分のレシピ一覧画面を表示するメソッド
+     */
+    @GetMapping("/recipes/my")
+    public String showMyRecipes(Model model) {
+        List<Recipe> recipes = recipeService.getMyRecipes();
+        model.addAttribute("recipes", recipes);
+        model.addAttribute("pageTitle", "自分のレシピ"); // ページタイトルを設定
+        return "recipe-list";
+    }
 }

@@ -6,7 +6,7 @@ import com.example.cookingmanagement.form.IngredientForm;
 import com.example.cookingmanagement.form.RecipeForm;
 import com.example.cookingmanagement.mapper.IngredientMapper;
 import com.example.cookingmanagement.mapper.RecipeConvertMapper;
-import com.example.cookingmanagement.mapper.RecipeMapper;
+import com.example.cookingmanagement.repository.RecipeRepository;
 import com.example.cookingmanagement.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,29 +21,29 @@ import java.util.HashMap;
 @Service
 public class RecipeService {
 
-    private final RecipeMapper recipeMapper;
+    private final RecipeRepository recipeRepository;
     private final RecipeConvertMapper recipeConvertMapper;
     private final IngredientMapper ingredientMapper;
 
-    public RecipeService(RecipeMapper recipeMapper, RecipeConvertMapper recipeConvertMapper, IngredientMapper ingredientMapper) {
-        this.recipeMapper = recipeMapper;
+    public RecipeService(RecipeRepository recipeRepository, RecipeConvertMapper recipeConvertMapper, IngredientMapper ingredientMapper) {
+        this.recipeRepository = recipeRepository;
         this.recipeConvertMapper = recipeConvertMapper;
         this.ingredientMapper = ingredientMapper;
     }
 
     public List<Recipe> getAllRecipes() {
-        List<Recipe> recipes = recipeMapper.findAll();
+        List<Recipe> recipes = recipeRepository.findAll();
         Integer userId = getLoginUserId();
         if (userId != null) {
             for (Recipe recipe : recipes) {
-                recipe.setFavorited(recipeMapper.countFavorite(userId, recipe.getRecipeId()) > 0);
+                recipe.setFavorited(recipeRepository.countFavorite(userId, recipe.getRecipeId()) > 0);
             }
         }
         return recipes;
     }
 
     public Recipe getRecipeById(int id) {
-        Recipe recipe = recipeMapper.findById(id);
+        Recipe recipe = recipeRepository.findById(id);
         if (recipe == null) {
             return null; // 呼び出し元で null を確認する
         }
@@ -51,9 +51,9 @@ public class RecipeService {
         recipe.setIngredients(ingredientMapper.findIngredientsByRecipeId(id));
         Integer userId = getLoginUserId();
         if (userId != null) {
-            recipe.setFavorited(recipeMapper.countFavorite(userId, recipe.getRecipeId()) > 0);
+            recipe.setFavorited(recipeRepository.countFavorite(userId, recipe.getRecipeId()) > 0);
         }
-        recipe.setFavoriteCount(recipeMapper.countFavoriteByRecipeId(id));
+        recipe.setFavoriteCount(recipeRepository.countFavoriteByRecipeId(id));
         return recipe;
     }
 
@@ -68,7 +68,7 @@ public class RecipeService {
         }
 
         // レシピを保存（投稿者付き！）
-        recipeMapper.insert(recipe);
+        recipeRepository.insert(recipe);
 
         int recipeId = recipe.getRecipeId(); // 自動採番されたID
 
@@ -90,7 +90,7 @@ public class RecipeService {
         recipe.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
         // レシピ情報の更新
-        recipeMapper.update(recipe);
+        recipeRepository.update(recipe);
 
         // 材料を一旦すべて削除してから、再挿入
         ingredientMapper.deleteByRecipeId(id);
@@ -123,11 +123,11 @@ public class RecipeService {
     public void deleteRecipe(int id) {
         // 材料を先に削除してからレシピを削除
         ingredientMapper.deleteByRecipeId(id);
-        recipeMapper.deleteById(id);
+        recipeRepository.deleteById(id);
     }
 
     public List<Recipe> searchByTitle(String keyword) {
-        return recipeMapper.findByTitleLike("%" + keyword + "%");
+        return recipeRepository.findByTitleLike("%" + keyword + "%");
     }
 
     public Map<String, Object> toggleFavorite(int recipeId) {
@@ -136,20 +136,46 @@ public class RecipeService {
 
         if (userId == null) {
             result.put("favorited", false);
-            result.put("favoriteCount", recipeMapper.countFavoriteByRecipeId(recipeId));
+            result.put("favoriteCount", recipeRepository.countFavoriteByRecipeId(recipeId));
             return result;
         }
 
-        boolean isFavorited = recipeMapper.countFavorite(userId, recipeId) > 0;
+        boolean isFavorited = recipeRepository.countFavorite(userId, recipeId) > 0;
         if (isFavorited) {
-            recipeMapper.deleteFavorite(userId, recipeId);
+            recipeRepository.deleteFavorite(userId, recipeId);
         } else {
-            recipeMapper.insertFavorite(userId, recipeId);
+            recipeRepository.insertFavorite(userId, recipeId);
         }
 
         result.put("favorited", !isFavorited);
-        result.put("favoriteCount", recipeMapper.countFavoriteByRecipeId(recipeId));
+        result.put("favoriteCount", recipeRepository.countFavoriteByRecipeId(recipeId));
         return result;
+    }
+
+    public List<Recipe> getFavoriteRecipes() {
+        Integer userId = getLoginUserId();
+        if (userId == null) {
+            return new ArrayList<>();
+        }
+        List<Recipe> recipes = recipeRepository.findFavoriteRecipesByUserId(userId);
+        // お気に入り状態を設定（すべてお気に入りなのでtrue）
+        for (Recipe recipe : recipes) {
+            recipe.setFavorited(true);
+        }
+        return recipes;
+    }
+
+    public List<Recipe> getMyRecipes() {
+        Integer userId = getLoginUserId();
+        if (userId == null) {
+            return new ArrayList<>();
+        }
+        List<Recipe> recipes = recipeRepository.findRecipesByUserId(userId);
+        // 各レシピのお気に入り状態を設定
+        for (Recipe recipe : recipes) {
+            recipe.setFavorited(recipeRepository.countFavorite(userId, recipe.getRecipeId()) > 0);
+        }
+        return recipes;
     }
 
     private Integer getLoginUserId() {
