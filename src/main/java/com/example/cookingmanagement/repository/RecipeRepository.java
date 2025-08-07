@@ -55,6 +55,14 @@ public class RecipeRepository {
         return recipeMapper.countFavoriteByRecipeId(recipeId);
     }
 
+    public void deleteFavoritesByRecipeId(int recipeId) {
+        recipeMapper.deleteFavoritesByRecipeId(recipeId);
+    }
+
+    public void deleteCommentsByRecipeId(int recipeId) {
+        recipeMapper.deleteCommentsByRecipeId(recipeId);
+    }
+
     public List<Recipe> findFavoriteRecipesByUserId(int userId) {
         return recipeMapper.findFavoriteRecipesByUserId(userId);
     }

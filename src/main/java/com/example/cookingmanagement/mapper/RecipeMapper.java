@@ -88,6 +88,12 @@ public interface RecipeMapper {
     @Select("SELECT COUNT(*) FROM favorites WHERE recipe_id = #{recipeId}")
     int countFavoriteByRecipeId(@Param("recipeId") int recipeId);
 
+    @Delete("DELETE FROM favorites WHERE recipe_id = #{recipeId}")
+    void deleteFavoritesByRecipeId(@Param("recipeId") int recipeId);
+
+    @Delete("DELETE FROM comments WHERE recipe_id = #{recipeId}")
+    void deleteCommentsByRecipeId(@Param("recipeId") int recipeId);
+
     @Select("""
         SELECT r.recipe_id, r.title, r.short_description, r.description, r.image_path, r.created_at,
                r.user_id, u.username

@@ -121,8 +121,13 @@ public class RecipeService {
     }
 
     public void deleteRecipe(int id) {
-        // 材料を先に削除してからレシピを削除
+        // 材料を先に削除
         ingredientMapper.deleteByRecipeId(id);
+        // お気に入りを削除
+        recipeRepository.deleteFavoritesByRecipeId(id);
+        // コメントを削除
+        recipeRepository.deleteCommentsByRecipeId(id);
+        // レシピ本体を削除
         recipeRepository.deleteById(id);
     }
 
