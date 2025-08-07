@@ -60,9 +60,17 @@ public class RecipeService {
     public void createRecipe(RecipeForm form) {
         Recipe recipe = recipeConvertMapper.toEntity(form);
         recipe.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        recipeMapper.insert(recipe); // IDがここで自動採番される
 
-        int recipeId = recipe.getRecipeId(); // 自動採番されたIDを取得
+        // 🔽 ログインユーザーを取得して、レシピに投稿者をセット
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof CustomUserDetails userDetails) {
+            recipe.setUser(userDetails.getUser());
+        }
+
+        // レシピを保存（投稿者付き！）
+        recipeMapper.insert(recipe);
+
+        int recipeId = recipe.getRecipeId(); // 自動採番されたID
 
         // 材料を保存
         for (IngredientForm ingredientForm : form.getIngredients()) {

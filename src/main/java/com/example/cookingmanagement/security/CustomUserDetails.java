@@ -4,23 +4,26 @@ import com.example.cookingmanagement.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
-public class CustomUserDetails implements UserDetails, Serializable {
-
-    private static final long serialVersionUID = 1L; // ← 固定
-
+public class CustomUserDetails implements UserDetails {
     private final User user;
 
     public CustomUserDetails(User user) {
         this.user = user;
     }
+    public int getUserId() {
+        return user.getUserId();
+    }
+
+    public User getUser() {
+        return user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return Collections.emptyList(); // 権限なし
     }
 
     @Override
@@ -33,7 +36,6 @@ public class CustomUserDetails implements UserDetails, Serializable {
         return user.getUsername();
     }
 
-    // UserDetails の残りのメソッドも実装
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -52,13 +54,5 @@ public class CustomUserDetails implements UserDetails, Serializable {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public int getUserId() {
-        return user.getUserId();
     }
 }

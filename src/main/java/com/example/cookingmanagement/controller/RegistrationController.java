@@ -25,7 +25,13 @@ public class RegistrationController {
             model.addAttribute("userForm", userForm);
             return "register";
         }
-        userService.createUser(userForm);
+        try {
+            userService.createUser(userForm);
+        } catch (IllegalArgumentException e) {
+            bindingResult.rejectValue("username", null, e.getMessage());
+            model.addAttribute("userForm", userForm);
+            return "register";
+        }
         return "redirect:/login?register";
     }
 }
