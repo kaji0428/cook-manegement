@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.util.*;
 import org.springframework.http.ResponseEntity;
 
@@ -53,15 +54,23 @@ public class RecipeController {
      * 詳細ページを表示するメソッド
      */
     @GetMapping("/recipes/{id}")
-    public String showRecipeDetail(@PathVariable("id") int id, Model model) {
+    public String showRecipeDetail(@PathVariable("id") int id, Model model, Principal principal) {
         Recipe recipe = recipeService.getRecipeById(id);
 
         // 説明文をXSS対策して改行を <br> に変換
         String safeDescription = HtmlUtils.htmlEscape(recipe.getDescription());
         safeDescription = safeDescription.replace("\n", "<br>");
 
+        // ログインユーザーが投稿者かどうかを判定
+        boolean isOwner = false;
+        if (principal != null && recipe.getUser() != null) {
+            String loggedInUsername = principal.getName(); // ログイン中のユーザー名
+            isOwner = recipe.getUser().getUsername().equals(loggedInUsername);
+        }
+
         model.addAttribute("recipe", recipe);
-        model.addAttribute("safeDescription", safeDescription); // 安全な説明文として渡す
+        model.addAttribute("safeDescription", safeDescription);
+        model.addAttribute("isOwner", isOwner); // ← 投稿者なら true
 
         return "recipe-detail";
     }

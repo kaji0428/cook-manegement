@@ -14,6 +14,9 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
     public void createUser(UserForm userForm) {
+        if (userRepository.selectUserByUsername(userForm.getUsername()) != null) {
+            throw new IllegalArgumentException("このユーザー名は既に使われています");
+        }
         User user = new User();
         user.setUsername(userForm.getUsername());
         String hashedPassword = passwordEncoder.encode(userForm.getPassword());

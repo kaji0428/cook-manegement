@@ -8,15 +8,45 @@ import java.util.List;
 @Mapper
 public interface RecipeMapper {
 
-    @Select("SELECT recipe_id, title, short_description, description, image_path, created_at FROM recipes")
+    @Select("""
+        SELECT r.recipe_id, r.title, r.short_description, r.description, r.image_path, r.created_at,
+               r.user_id, u.username
+        FROM recipes r
+        LEFT JOIN users u ON r.user_id = u.user_id
+        """)
+    @Results({
+            @Result(property = "recipeId", column = "recipe_id"),
+            @Result(property = "title", column = "title"),
+            @Result(property = "shortDescription", column = "short_description"),
+            @Result(property = "description", column = "description"),
+            @Result(property = "imagePath", column = "image_path"),
+            @Result(property = "createdAt", column = "created_at"),
+            @Result(property = "user.userId", column = "user_id"),
+            @Result(property = "user.username", column = "username")
+    })
     List<Recipe> findAll();
 
-    @Select("SELECT recipe_id, title, short_description, description, image_path, created_at FROM recipes WHERE recipe_id = #{id}")
+    @Select("""
+        SELECT r.recipe_id, r.title, r.short_description, r.description, r.image_path, r.created_at,
+               r.user_id, u.username
+        FROM recipes r
+        LEFT JOIN users u ON r.user_id = u.user_id
+        WHERE r.recipe_id = #{id}
+        """)
+    @Results({
+            @Result(property = "recipeId", column = "recipe_id"),
+            @Result(property = "title", column = "title"),
+            @Result(property = "shortDescription", column = "short_description"),
+            @Result(property = "description", column = "description"),
+            @Result(property = "imagePath", column = "image_path"),
+            @Result(property = "createdAt", column = "created_at"),
+            @Result(property = "user.userId", column = "user_id"),
+            @Result(property = "user.username", column = "username")
+    })
     Recipe findById(int id);
 
-    // ✅ 主キー自動取得の設定（重複を削除）
-    @Insert("INSERT INTO recipes (title, short_description, description, image_path, created_at) " +
-            "VALUES (#{title}, #{shortDescription}, #{description}, #{imagePath}, #{createdAt})")
+    @Insert("INSERT INTO recipes (title, short_description, description, image_path, created_at, user_id) " +
+            "VALUES (#{title}, #{shortDescription}, #{description}, #{imagePath}, #{createdAt}, #{user.userId})")
     @Options(useGeneratedKeys = true, keyProperty = "recipeId")
     void insert(Recipe recipe);
 
@@ -27,7 +57,23 @@ public interface RecipeMapper {
     @Delete("DELETE FROM recipes WHERE recipe_id = #{id}")
     void deleteById(int id);
 
-    @Select("SELECT * FROM recipes WHERE title LIKE #{title}")
+    @Select("""
+        SELECT r.recipe_id, r.title, r.short_description, r.description, r.image_path, r.created_at,
+               r.user_id, u.username
+        FROM recipes r
+        LEFT JOIN users u ON r.user_id = u.user_id
+        WHERE r.title LIKE #{title}
+        """)
+    @Results({
+            @Result(property = "recipeId", column = "recipe_id"),
+            @Result(property = "title", column = "title"),
+            @Result(property = "shortDescription", column = "short_description"),
+            @Result(property = "description", column = "description"),
+            @Result(property = "imagePath", column = "image_path"),
+            @Result(property = "createdAt", column = "created_at"),
+            @Result(property = "user.userId", column = "user_id"),
+            @Result(property = "user.username", column = "username")
+    })
     List<Recipe> findByTitleLike(String title);
 
     @Insert("INSERT INTO favorites (user_id, recipe_id) VALUES (#{userId}, #{recipeId})")

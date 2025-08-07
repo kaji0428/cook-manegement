@@ -2,6 +2,7 @@ package com.example.cookingmanagement.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,10 +13,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // CSRFを有効化（デフォルトで有効）
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/css/**", "/images/**", "/kami.mp3"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -31,12 +37,13 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/recipes", true)
+                        .defaultSuccessUrl("/recipes", false)
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/")
-                );
+                )
+                .authenticationProvider(authenticationProvider());
 
         return http.build();
     }
@@ -44,5 +51,13 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(userDetailsService); // ← 修正ポイント
+        return provider;
     }
 }

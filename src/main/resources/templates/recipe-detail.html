@@ -52,7 +52,7 @@
         <span th:text="${recipe.createdAt != null ? #dates.format(recipe.createdAt, 'yyyy年MM月dd日') : '未登録'}">日付</span>
       </p>
 
-      <div class="button-group">
+      <div class="button-group" th:if="${isOwner}">
         <a class="edit-button" th:href="@{|/recipes/edit/${recipe.recipeId}|}">編集する</a>
         <form th:action="@{|/recipes/delete/${recipe.recipeId}|}" method="post" style="display:inline;">
           <button class="delete-button" type="submit" onclick="return confirm('本当に削除しますか？')">削除する</button>
