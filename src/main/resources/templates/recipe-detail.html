@@ -45,7 +45,12 @@
 
   <!-- 下部：説明とその他 -->
   <div class="detail-bottom">
-    <p class="description" th:utext="${safeDescription}">説明文</p>
+    <div class="description-container">
+      <p id="normal-description" class="description" th:utext="${safeDescription}">説明文</p>
+      <p id="gentle-description" class="description" th:utext="${safeGentleDescription}" style="display:none;">優しい説明文</p>
+    </div>
+    <button id="toggle-gentle-mode" class="toggle-button">優しい解説モードに切り替える</button>
+
     <div class="bottom-meta">
       <p class="date">
         投稿日：
@@ -207,6 +212,27 @@
             if (errorMessageDiv) { // Add null check here too
               errorMessageDiv.textContent = 'コメントの投稿中にエラーが発生しました。';
             }
+          }
+        });
+      }
+
+      // 優しい解説モードの切り替え
+      const toggleButton = document.getElementById('toggle-gentle-mode');
+      const normalDescription = document.getElementById('normal-description');
+      const gentleDescription = document.getElementById('gentle-description');
+      let isGentleMode = false;
+
+      if (toggleButton) {
+        toggleButton.addEventListener('click', () => {
+          isGentleMode = !isGentleMode;
+          if (isGentleMode) {
+            normalDescription.style.display = 'none';
+            gentleDescription.style.display = 'block';
+            toggleButton.textContent = '通常の解説モードに戻す';
+          } else {
+            normalDescription.style.display = 'block';
+            gentleDescription.style.display = 'none';
+            toggleButton.textContent = '優しい解説モードに切り替える';
           }
         });
       }

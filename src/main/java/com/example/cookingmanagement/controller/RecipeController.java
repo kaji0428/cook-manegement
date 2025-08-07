@@ -6,6 +6,7 @@ import com.example.cookingmanagement.form.IngredientForm;
 import com.example.cookingmanagement.form.RecipeForm;
 import com.example.cookingmanagement.service.RecipeService;
 import com.example.cookingmanagement.service.CommentService;
+import com.example.cookingmanagement.service.GeminiService; // 追加
 import com.example.cookingmanagement.form.CommentForm;
 import com.example.cookingmanagement.entity.Comment;
 import jakarta.validation.Valid;
@@ -30,11 +31,13 @@ public class RecipeController {
     // サービスクラスのインスタンスを用意
     private final RecipeService recipeService;
     private final CommentService commentService;
+    private final GeminiService geminiService; // GeminiServiceを追加
 
     // コンストラクタでDI（依存性注入）
-    public RecipeController(RecipeService recipeService, CommentService commentService) {
+    public RecipeController(RecipeService recipeService, CommentService commentService, GeminiService geminiService) {
         this.recipeService = recipeService;
         this.commentService = commentService;
+        this.geminiService = geminiService; // 注入
     }
 
     /**
@@ -71,6 +74,10 @@ public class RecipeController {
         String rawDescription = recipe.getDescription() != null ? recipe.getDescription() : "";
         String safeDescription = HtmlUtils.htmlEscape(rawDescription).replace("\n", "<br>");
 
+        // Gemini APIを使って優しい解説を生成
+        String gentleDescription = geminiService.getGentleExplanation(rawDescription);
+        String safeGentleDescription = HtmlUtils.htmlEscape(gentleDescription).replace("\n", "<br>");
+
         boolean isOwner = false;
         if (principal != null && recipe.getUser() != null) {
             String loggedInUsername = principal.getName();
@@ -81,6 +88,7 @@ public class RecipeController {
 
         model.addAttribute("recipe", recipe);
         model.addAttribute("safeDescription", safeDescription);
+        model.addAttribute("safeGentleDescription", safeGentleDescription); // 優しい解説を追加
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("comments", comments);
         model.addAttribute("commentForm", new CommentForm());
