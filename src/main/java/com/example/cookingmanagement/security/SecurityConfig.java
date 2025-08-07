@@ -22,7 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/css/**", "/images/**", "/kami.mp3"))
+                                .csrf(csrf -> csrf.ignoringRequestMatchers("/css/**", "/images/**", "/kami.mp3", "/recipes/*/comments"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/css/**", "/images/**", "/kami.mp3",

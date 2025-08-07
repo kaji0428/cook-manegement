@@ -71,7 +71,7 @@ ul {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 1.5em;
-    max-width: 900px;
+    width: 900px;
 }
 
 /* 各レシピカード */

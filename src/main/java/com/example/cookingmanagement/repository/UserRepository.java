@@ -17,5 +17,7 @@ public class UserRepository {
         userMapper.insertUser(user);
     }
 
-
+    public User selectUserById(int userId) {
+        return userMapper.selectUserById(userId);
+    }
 }

@@ -23,4 +23,8 @@ public class UserService {
         user.setPassword(hashedPassword);
         userRepository.insertUser(user);
     }
+
+    public User getUserById(int userId) {
+        return userRepository.selectUserById(userId);
+    }
 }
