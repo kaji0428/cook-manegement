@@ -78,10 +78,6 @@ public class RecipeController {
         String rawDescription = recipe.getDescription() != null ? recipe.getDescription() : "";
         String safeDescription = HtmlUtils.htmlEscape(rawDescription).replace("\n", "<br>");
 
-        // Gemini APIを使って優しい解説を生成
-        String gentleDescription = geminiService.getGentleExplanation(rawDescription);
-        String safeGentleDescription = HtmlUtils.htmlEscape(gentleDescription).replace("\n", "<br>");
-
         boolean isOwner = false;
         if (principal != null && recipe.getUser() != null) {
             String loggedInUsername = principal.getName();
@@ -92,12 +88,40 @@ public class RecipeController {
 
         model.addAttribute("recipe", recipe);
         model.addAttribute("safeDescription", safeDescription);
-        model.addAttribute("safeGentleDescription", safeGentleDescription); // 優しい解説を追加
         model.addAttribute("isOwner", isOwner);
         model.addAttribute("comments", comments);
         model.addAttribute("commentForm", new CommentForm());
 
         return "recipe-detail";
+    }
+
+    /**
+     * Gemini APIを使用してレシピの解説を非同期で取得するエンドポイント
+     */
+    @GetMapping("/api/recipes/{id}/explanation")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> getGentleExplanation(@PathVariable("id") int id) {
+        Recipe recipe = recipeService.getRecipeById(id);
+        if (recipe == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // トークン軽量化のため、必要な情報だけを結合してプロンプトを作成
+        StringBuilder promptText = new StringBuilder();
+        promptText.append("レシピ名: ").append(recipe.getTitle()).append("\n\n");
+        promptText.append("材料:\n");
+        recipe.getIngredients().forEach(ingredient ->
+                promptText.append("- ").append(ingredient.getName()).append(": ").append(ingredient.getQuantity()).append("\n")
+        );
+        promptText.append("\n作り方:\n").append(recipe.getDescription());
+
+        String gentleExplanation = geminiService.getGentleExplanation(promptText.toString());
+        String safeGentleExplanation = HtmlUtils.htmlEscape(gentleExplanation).replace("\n", "<br>");
+
+        Map<String, String> response = new HashMap<>();
+        response.put("explanation", safeGentleExplanation);
+
+        return ResponseEntity.ok(response);
     }
 
     /**
