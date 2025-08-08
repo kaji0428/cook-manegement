@@ -10,6 +10,14 @@
     color: #333;
 }
 
+/* レシピフォームのタイトル */
+h2 {
+    text-align: center;
+    color: #ff8800;
+    margin-top: 0.5em; /* 必要に応じて調整 */
+    margin-bottom: 1em; /* 必要に応じて調整 */
+}
+
 /* ラベルと入力欄を縦に整列 */
 form label {
     display: block;
