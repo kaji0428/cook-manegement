@@ -47,9 +47,14 @@
   <div class="detail-bottom">
     <div class="description-container">
       <p id="normal-description" class="description" th:utext="${safeDescription}">説明文</p>
-      <p id="gentle-description" class="description" th:utext="${safeGentleDescription}" style="display:none;">優しい説明文</p>
+      <!-- ★ここから下を改修 -->
+      <div id="gentle-explanation-container" style="display: none;">
+          <h3>🤖 AIによる優しい解説</h3>
+          <p id="gentle-explanation-content" class="description"></p>
+      </div>
     </div>
-    <button id="toggle-gentle-mode" class="toggle-button">優しい解説モードに切り替える</button>
+    <button id="generate-explanation-button" class="toggle-button" th:attr="data-recipe-id=${recipe.recipeId}">AIで作り方を解説してもらう</button>
+    <!-- ★ここまでを改修 -->
 
     <div class="bottom-meta">
       <p class="date">
@@ -216,23 +221,57 @@
         });
       }
 
-      // 優しい解説モードの切り替え
-      const toggleButton = document.getElementById('toggle-gentle-mode');
+      // AI解説の生成と表示切り替え
+      const generateExplanationButton = document.getElementById('generate-explanation-button');
       const normalDescription = document.getElementById('normal-description');
-      const gentleDescription = document.getElementById('gentle-description');
-      let isGentleMode = false;
+      const gentleExplanationContainer = document.getElementById('gentle-explanation-container');
+      const gentleExplanationContent = document.getElementById('gentle-explanation-content');
+      let explanationGenerated = false;
+      let explanationVisible = false;
 
-      if (toggleButton) {
-        toggleButton.addEventListener('click', () => {
-          isGentleMode = !isGentleMode;
-          if (isGentleMode) {
-            normalDescription.style.display = 'none';
-            gentleDescription.style.display = 'block';
-            toggleButton.textContent = '通常の解説モードに戻す';
+      if (generateExplanationButton) {
+        generateExplanationButton.addEventListener('click', async () => {
+          const recipeId = generateExplanationButton.dataset.recipeId;
+
+          if (!explanationGenerated) {
+            // 初回生成時
+            generateExplanationButton.textContent = 'AI解説を生成中...';
+            generateExplanationButton.disabled = true; // 連打防止
+            normalDescription.style.display = 'none'; // 通常の説明を非表示
+
+            try {
+              const response = await fetch(`/api/recipes/${recipeId}/explanation`);
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              const data = await response.json();
+              gentleExplanationContent.innerHTML = data.explanation;
+              gentleExplanationContainer.style.display = 'block';
+              explanationGenerated = true;
+              explanationVisible = true;
+              generateExplanationButton.textContent = 'AI解説を隠す';
+            } catch (error) {
+              console.error('AI解説の生成に失敗しました:', error);
+              gentleExplanationContent.innerHTML = 'AI解説の生成に失敗しました。時間をおいて再度お試しください。';
+              gentleExplanationContainer.style.display = 'block';
+              explanationGenerated = true;
+              explanationVisible = true;
+              generateExplanationButton.textContent = 'AI解説を隠す'; // エラーでもボタンはトグルに
+            } finally {
+              generateExplanationButton.disabled = false;
+            }
           } else {
-            normalDescription.style.display = 'block';
-            gentleDescription.style.display = 'none';
-            toggleButton.textContent = '優しい解説モードに切り替える';
+            // 生成済みの場合、表示/非表示を切り替える
+            explanationVisible = !explanationVisible;
+            if (explanationVisible) {
+              normalDescription.style.display = 'none';
+              gentleExplanationContainer.style.display = 'block';
+              generateExplanationButton.textContent = 'AI解説を隠す';
+            } else {
+              normalDescription.style.display = 'block';
+              gentleExplanationContainer.style.display = 'none';
+              generateExplanationButton.textContent = 'AI解説を表示する';
+            }
           }
         });
       }
