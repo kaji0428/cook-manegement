@@ -24,6 +24,9 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication; // 追加
+import org.springframework.security.core.context.SecurityContextHolder; // 追加
+import com.example.cookingmanagement.security.CustomUserDetails; // 追加
 
 @Controller // コントローラクラスとして認識されるアノテーション
 public class RecipeController {
@@ -57,6 +60,7 @@ public class RecipeController {
 
         // レシピ一覧をビューに渡す
         model.addAttribute("recipes", recipes);
+        model.addAttribute("pageTitle", "レシピ一覧"); // ページタイトルを設定
         return "recipe-list";
     }
 
@@ -249,7 +253,7 @@ public class RecipeController {
     public String showFavoriteRecipes(Model model) {
         List<Recipe> recipes = recipeService.getFavoriteRecipes();
         model.addAttribute("recipes", recipes);
-        model.addAttribute("pageTitle", "お気に入りレシピ"); // ページタイトルを設定
+        model.addAttribute("pageTitle", "お気に入り"); // ページタイトルを設定
         return "recipe-list";
     }
 
@@ -260,7 +264,14 @@ public class RecipeController {
     public String showMyRecipes(Model model) {
         List<Recipe> recipes = recipeService.getMyRecipes();
         model.addAttribute("recipes", recipes);
-        model.addAttribute("pageTitle", "自分のレシピ"); // ページタイトルを設定
+        // ログインユーザーのユーザー名を取得してページタイトルに設定
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            model.addAttribute("pageTitle", userDetails.getUsername() + "");
+        } else {
+            model.addAttribute("pageTitle", "自分のレシピ"); // ログインしていない場合
+        }
         return "recipe-list";
     }
 
