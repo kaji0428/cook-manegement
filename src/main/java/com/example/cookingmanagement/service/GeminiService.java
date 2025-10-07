@@ -75,8 +75,4 @@ public class GeminiService {
         }
         return originalText; // エラーの場合は元のテキストを返す
     }
-    @PostConstruct
-    public void debugApiKey() {
-        System.out.println(">>> Gemini API KEY is: " + geminiApiKey);  // これで起動時に確認できます
-    }
 }
